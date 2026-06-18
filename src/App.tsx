@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { Mail, Cloud, ArrowRight, ArrowUpRight, MapPin, Calendar, Briefcase } from 'lucide-react';
 import heroPhoto from './assets/hero.png';
