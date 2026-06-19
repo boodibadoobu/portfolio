@@ -40,7 +40,7 @@ const portfolioData = {
       metrics: ["Real-time chat module via Socket.io", "End-to-end test coverage across all flows"],
       tags: ["React 19", "Node.js", "Socket.io", "Prisma ORM", "MySQL", "Tailwind CSS"],
       link: "https://github.com/boodibadoobu/WeCareU",
-      image: "/wecareu.png",
+      image: "/wecareu.pages.dev_login.webp",
       comingSoon: false,
     },
     {
@@ -56,7 +56,7 @@ const portfolioData = {
       metrics: ["Supports UN Sustainable Development Goal 14", "Full donation module from input to processing"],
       tags: ["Next.js 16", "TypeScript", "Supabase", "ShadcnUI", "Prisma", "Tailwind CSS"],
       link: "https://github.com/PPL-SI4701-F/SinergiLaut-PPL",
-      image: "/sinergulaut.png",
+      image: "/sinergilaut.vercel.app_login.webp",
       comingSoon: false,
     },
     {
@@ -102,7 +102,7 @@ const portfolioData = {
       metrics: ["Real-time gyroscope input processing", "Hardware-software integration"],
       tags: [],
       link: "https://github.com/boodibadoobu/Gyrosteer",
-      image: "/gyrosteer.png",
+      image: "/gyrosteer.jpeg",
       comingSoon: false,
     },
     {
