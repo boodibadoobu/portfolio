@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Mail, Cloud, ArrowRight, ArrowUpRight, MapPin, Calendar, Briefcase } from 'lucide-react';
 import heroPhoto from './assets/hero.png';
@@ -10,7 +10,7 @@ const portfolioData = {
     title: "Software Engineer",
     subtitle: "Cloud Engineer & Developer",
     tagline: "Building resilient applications at the intersection of modern web development and cloud architecture.",
-    about: "I am an Information Systems student at Telkom University with a passion for software optimization and cloud computing architectures (AWS, Google Cloud, Azure). I specialize in ensuring robust, high-performing software solutions. Alongside my studies, I serve as a practicum assistant, where I mentor peers and solidify my own technical foundations. I am driven by a continuous desire to understand how systems work under the hood and how to make them more secure and efficient.",
+    about: "I am an Information Systems student at Telkom University with a passion for software optimization and cloud computing architectures (AWS). I specialize in ensuring robust, high-performing software solutions. Alongside my studies, I serve as a practicum assistant, where I mentor peers and solidify my own technical foundations. I am driven by a continuous desire to understand how systems work under the hood and how to make them more secure and efficient.",
     location: "Bandung, ID",
     issue: "06",
     year: "2026",
@@ -22,7 +22,7 @@ const portfolioData = {
     tags: ["Full Stack", "Cloud", "DevOps"],
   },
   skills: [
-    { category: "Cloud Platforms", items: ["AWS", "Google Cloud", "Azure"] },
+    { category: "Cloud Platforms", items: ["AWS"] },
     { category: "Languages & Frameworks", items: ["React", "Next.js", "TypeScript", "Node.js"] },
     { category: "Databases & Tools", items: ["MySQL", "Supabase", "Prisma ORM", "Socket.io"] },
   ],
@@ -40,6 +40,7 @@ const portfolioData = {
       metrics: ["Real-time chat module via Socket.io", "End-to-end test coverage across all flows"],
       tags: ["React 19", "Node.js", "Socket.io", "Prisma ORM", "MySQL", "Tailwind CSS"],
       link: "https://github.com/boodibadoobu/WeCareU",
+      image: "/wecareu.png",
       comingSoon: false,
     },
     {
@@ -55,6 +56,7 @@ const portfolioData = {
       metrics: ["Supports UN Sustainable Development Goal 14", "Full donation module from input to processing"],
       tags: ["Next.js 16", "TypeScript", "Supabase", "ShadcnUI", "Prisma", "Tailwind CSS"],
       link: "https://github.com/PPL-SI4701-F/SinergiLaut-PPL",
+      image: "/sinergulaut.png",
       comingSoon: false,
     },
     {
@@ -90,10 +92,18 @@ const portfolioData = {
     {
       id: 5,
       title: "GyroSteer",
-      description: "A gyroscope-driven steering project. Repository link coming soon.",
+      bgWord: "STEER",
+      kicker: "Project 05",
+      heading: "Gyroscope Steering System",
+      description: "A hardware-software project that uses gyroscope sensor data to control a steering mechanism. Explores real-time sensor input processing and embedded system integration.",
+      challenge: "Accurately translating raw gyroscope readings into smooth, responsive steering commands with minimal latency.",
+      role: "Developer",
+      year: "2025",
+      metrics: ["Real-time gyroscope input processing", "Hardware-software integration"],
       tags: [],
-      link: "#",
-      comingSoon: true,
+      link: "https://github.com/boodibadoobu/Gyrosteer",
+      image: "/gyrosteer.png",
+      comingSoon: false,
     },
     {
       id: 6,
@@ -120,7 +130,7 @@ const portfolioData = {
       id: 2,
       role: "Information Systems Student",
       company: "Telkom University",
-      duration: "2022 – Present",
+      duration: "2023 – Present",
       achievements: [
         "Specializing in software optimization and cloud computing architectures.",
         "Built multiple full-stack projects spanning web, real-time, and LMS domains.",
@@ -248,19 +258,53 @@ const Reveal = ({ children, className = '' }: { children: ReactNode; className?:
   );
 };
 
-const Header = () => (
-  <nav className="w-full border-b border-editorial px-6 py-4 flex justify-between items-center sticky top-0 z-50" style={{ background: 'rgba(246,245,241,0.8)', backdropFilter: 'blur(12px)' }}>
-    <a href="#" className="text-2xl font-serif-custom font-semibold tracking-tight">{portfolioData.personalInfo.shortName}.</a>
-    <div className="hidden md:flex space-x-12 text-[11px] font-medium tracking-[0.2em] uppercase">
-      <a href="#about" className="hover:text-[#3b638c] transition-colors">About</a>
-      <a href="#projects" className="hover:text-[#3b638c] transition-colors">Projects</a>
-      <a href="#experience" className="hover:text-[#3b638c] transition-colors">Experience</a>
-    </div>
-    <a href="#contact" className="border border-black rounded-full px-6 py-2 text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-colors flex items-center gap-2">
-      Get In Touch <ArrowRight className="w-3 h-3" />
-    </a>
-  </nav>
-);
+const NAV_LINKS = [
+  { id: 'about', label: 'About' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'experience', label: 'Experience' },
+];
+
+const Header = () => {
+  const [active, setActive] = useState('');
+
+  useEffect(() => {
+    const observers = NAV_LINKS.map(({ id }) => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(id); },
+        { threshold: 0, rootMargin: '-64px 0px -50% 0px' }
+      );
+      obs.observe(el);
+      return obs;
+    });
+    return () => observers.forEach(obs => obs?.disconnect());
+  }, []);
+
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
+  return (
+    <nav className="w-full border-b border-editorial px-6 py-4 flex justify-between items-center sticky top-0 z-50" style={{ background: 'rgba(246,245,241,0.8)', backdropFilter: 'blur(12px)' }}>
+      <a href="#" className="text-2xl font-serif-custom font-semibold tracking-tight">{portfolioData.personalInfo.shortName}.</a>
+      <div className="hidden md:flex space-x-12 text-[11px] font-medium tracking-[0.2em] uppercase">
+        {NAV_LINKS.map(({ id, label }) => (
+          <button
+            key={id}
+            onClick={() => scrollTo(id)}
+            className="relative flex flex-col items-center gap-1.5 hover:text-[#3b638c] transition-colors bg-transparent border-none cursor-pointer p-0"
+          >
+            {label}
+            <span
+              className="w-1 h-1 rounded-full bg-[#3b638c] transition-all duration-300"
+              style={{ opacity: active === id ? 1 : 0, transform: active === id ? 'scale(1)' : 'scale(0)' }}
+            />
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+};
 
 const Hero = () => {
   const info = portfolioData.personalInfo;
@@ -315,9 +359,6 @@ const Hero = () => {
           <div className="fade-up flex items-center gap-8 flex-wrap" style={{ animationDelay: '0.6s' }}>
             <a href="#projects" className="bg-black text-white px-8 py-4 text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-[#3b638c] transition-colors">
               View Projects <ArrowRight className="w-4 h-4" />
-            </a>
-            <a href="#contact" className="text-xs uppercase tracking-widest flex items-center gap-3 hover:text-[#3b638c] transition-colors border-b border-black pb-1">
-              Contact Me <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>
@@ -397,146 +438,118 @@ const About = () => (
   </section>
 );
 
-// Layout A — magazine cover
-const ProjectCover = ({ project, color }: { project: typeof portfolioData.projects[0]; color: string }) => (
-  <section className="relative w-full min-h-[90vh] flex items-center justify-center border-b border-editorial overflow-hidden pt-20 pb-32">
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-serif-custom text-black/5 whitespace-nowrap pointer-events-none select-none z-0" style={{ fontSize: '18vw' }}>
-      {project.bgWord}
-    </div>
-
-    <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center">
-      <Reveal><p className="text-[10px] uppercase tracking-[0.3em] mb-8">{project.kicker}</p></Reveal>
-
-      <Reveal>
-        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden shadow-2xl flex flex-col justify-end p-8" style={{ background: color }}>
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
-          <p className="relative text-white/70 text-[10px] uppercase tracking-[0.3em] mb-3">{project.heading}</p>
-          <h3 className="relative font-serif-custom text-white text-4xl">{project.title}</h3>
-        </div>
-      </Reveal>
-
-      <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 hidden md:block text-left">
-        <p className="text-[11px] uppercase tracking-widest text-gray-500 mb-2">Design By Alvin</p>
-        <div className="text-lg tracking-[0.2rem]">***</div>
-      </div>
-      <div className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 hidden md:block text-right">
-        <p className="text-[11px] uppercase tracking-widest text-gray-500 mb-2">Project No.1</p>
-        <div className="text-lg tracking-[0.2rem]">***</div>
-      </div>
-
-      <Reveal className="mt-12 text-center max-w-lg">
-        <h2 className="font-serif-custom text-4xl md:text-6xl mb-6" style={{ color }}>{project.heading}</h2>
-        <p className="text-sm text-gray-600 leading-relaxed font-light mb-6">{project.description}</p>
-        <div className="flex justify-center flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span key={tag} className="px-3 py-1 rounded-full border border-gray-300 text-[10px] uppercase tracking-wider">{tag}</span>
-          ))}
-        </div>
-        <a href={project.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-8 font-serif-custom italic text-lg hover:text-[#3b638c] transition-colors">
-          View on GitHub <span className="not-italic text-sm">→</span>
-        </a>
-      </Reveal>
-    </div>
-  </section>
-);
-
-// Layout B — arched
-const ProjectArched = ({ project, color }: { project: typeof portfolioData.projects[0]; color: string }) => (
-  <section className="w-full py-32 border-b border-editorial bg-white/40">
-    <div className="max-w-7xl mx-auto px-6">
-      <Reveal className="text-center mb-24">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[#3b638c] mb-4">{project.kicker}</p>
-        <h2 className="font-serif-custom text-4xl md:text-5xl max-w-2xl mx-auto leading-tight">{project.heading}</h2>
-      </Reveal>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
-        <Reveal className="order-2 md:order-1 text-center md:text-right">
-          <h3 className="font-serif-custom text-2xl mb-4">The Challenge</h3>
-          <p className="text-xs text-gray-500 leading-loose">{project.challenge}</p>
-        </Reveal>
-
-        <Reveal className="order-1 md:order-2 flex justify-center">
-          <div className="w-full max-w-[300px] aspect-[2/3] rounded-t-[1000px] overflow-hidden shadow-lg flex flex-col justify-end items-center p-8 relative" style={{ background: color }}>
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
-            <h3 className="relative font-serif-custom text-white text-3xl text-center">{project.title}</h3>
-          </div>
-        </Reveal>
-
-        <Reveal className="order-3 md:order-3 text-center md:text-left">
-          <div className="flex justify-center md:justify-start flex-wrap gap-2 mb-6">
-            {project.tags.slice(0, 3).map((tag, i) => (
-              <span key={tag} className={`px-4 py-1 rounded-full text-[10px] uppercase tracking-wider ${i === 0 ? 'text-white' : 'border border-gray-300'}`} style={i === 0 ? { background: color } : {}}>{tag}</span>
-            ))}
-          </div>
-          <a href={project.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-serif-custom italic text-lg hover:text-[#3b638c] transition-colors">
-            View on GitHub <span className="not-italic text-sm">→</span>
-          </a>
-        </Reveal>
-      </div>
-    </div>
-  </section>
-);
-
-// Layout C — structured grid
-const ProjectGrid = ({ project, color }: { project: typeof portfolioData.projects[0]; color: string }) => (
-  <section className="w-full py-32 border-b border-editorial">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="w-full h-px bg-black/20 mb-16 transform -skew-y-1" />
-      <div className="flex flex-col md:flex-row gap-16">
-        <Reveal className="hidden md:flex flex-col justify-between border-r border-editorial pr-8">
-          <h2 className="vertical-text text-5xl font-serif-custom tracking-widest" style={{ color }}>{project.title}</h2>
-          <p className="text-[10px] uppercase tracking-[0.2em] mt-8 text-gray-400">{project.kicker}</p>
-        </Reveal>
-
-        <div className="flex-grow">
-          <h2 className="md:hidden text-4xl font-serif-custom mb-8" style={{ color }}>{project.title}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <Reveal>
-              <div className="aspect-video overflow-hidden flex items-center justify-center p-8 relative" style={{ background: color }}>
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
-                <p className="relative font-serif-custom text-white text-2xl text-center">{project.heading}</p>
-              </div>
-            </Reveal>
-            <Reveal className="flex flex-col justify-center">
-              <h3 className="font-serif-custom text-3xl mb-6">{project.heading}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-8 font-light">{project.description}</p>
-              <div className="grid grid-cols-2 gap-4 border-t border-editorial pt-6">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">Role</p>
-                  <p className="text-sm font-medium">{project.role}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">Year</p>
-                  <p className="text-sm font-medium">{project.year}</p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-6">
-                {project.tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1 rounded-full border border-gray-300 text-[10px] uppercase tracking-wider">{tag}</span>
-                ))}
-              </div>
-              <a href={project.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-8 font-serif-custom italic text-lg hover:text-[#3b638c] transition-colors">
-                View on GitHub <span className="not-italic text-sm">→</span>
-              </a>
-            </Reveal>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
 const Projects = () => {
+  const [active, setActive] = useState(0);
+  const dirRef = useRef<'left' | 'right'>('right');
+  const isFirst = useRef(true);
+  const animTargets = useRef<(HTMLElement | null)[]>([]);
+
   const real = portfolioData.projects.filter((p) => !p.comingSoon);
   const upcoming = portfolioData.projects.filter((p) => p.comingSoon);
-  const layouts = [ProjectCover, ProjectArched, ProjectGrid];
+  const project = real[active];
+  const color = projectThemes[active];
+
+  useEffect(() => {
+    if (isFirst.current) { isFirst.current = false; return; }
+    const cls = dirRef.current === 'right' ? 'slide-in-right' : 'slide-in-left';
+    animTargets.current.forEach(el => {
+      if (!el) return;
+      el.classList.remove('slide-in-left', 'slide-in-right');
+      void el.offsetWidth; // force reflow to restart animation
+      el.classList.add(cls);
+    });
+  }, [active]);
+
+  const prev = () => { dirRef.current = 'left';  setActive(i => (i - 1 + real.length) % real.length); };
+  const next = () => { dirRef.current = 'right'; setActive(i => (i + 1) % real.length); };
+
+  const setRef = (i: number) => (el: HTMLElement | null) => { animTargets.current[i] = el; };
 
   return (
     <div id="projects">
-      {real.map((project, i) => {
-        const Layout = layouts[i % layouts.length];
-        return <Layout key={project.id} project={project} color={projectThemes[i]} />;
-      })}
+      <section className="relative w-full min-h-[90vh] flex items-center justify-center border-b border-editorial overflow-hidden pt-20 pb-32">
+
+        {/* Centering wrapper keeps transform; inner div gets the animation */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0">
+          <div ref={setRef(0)} className="font-serif-custom text-black/5 whitespace-nowrap" style={{ fontSize: '18vw' }}>
+            {project.bgWord}
+          </div>
+        </div>
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center">
+
+          {/* Kicker */}
+          <p ref={setRef(1) as React.Ref<HTMLParagraphElement>} className="text-[10px] uppercase tracking-[0.3em] mb-8">
+            {project.kicker}
+          </p>
+
+          {/* Magazine cover card */}
+          <div
+            ref={setRef(2)}
+            className="relative w-[450px] h-[293px] shrink-0 overflow-hidden shadow-2xl flex flex-col justify-end p-5"
+            style={{ background: color, transition: 'background 0.4s ease' }}
+          >
+            {project.image ? (
+              <img
+                src={project.image}
+                alt={project.title}
+                className="absolute inset-0 w-full h-full object-cover object-top"
+              />
+            ) : (
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+            )}
+            {/* gradient overlay so text stays legible */}
+            <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${color}f0 0%, ${color}88 40%, transparent 75%)` }} />
+            <p className="relative text-white/70 text-[9px] uppercase tracking-[0.3em] mb-2">{project.heading}</p>
+            <h3 className="relative font-serif-custom text-white text-2xl">{project.title}</h3>
+          </div>
+
+          {/* Left side panel */}
+          <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-start gap-4">
+            <p className="text-[11px] uppercase tracking-widest text-gray-500">Works</p>
+            <div className="text-lg tracking-[0.2rem] text-gray-400">***</div>
+            <button onClick={prev} className="mt-2 flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-colors" aria-label="Previous project">
+              ← Prev
+            </button>
+          </div>
+
+          {/* Right side panel */}
+          <div className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-end gap-4">
+            <p className="text-[11px] uppercase tracking-widest text-gray-500">
+              Project No.{active + 1}<span className="text-gray-300"> / {real.length}</span>
+            </p>
+            <div className="text-lg tracking-[0.2rem] text-gray-400">***</div>
+            <button onClick={next} className="mt-2 flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-colors" aria-label="Next project">
+              Next →
+            </button>
+          </div>
+
+          {/* Bottom content — fixed-height regions prevent card from shifting */}
+          <div ref={setRef(3)} className="mt-10 text-center max-w-lg w-full flex flex-col items-center">
+            <div className="h-[6rem] flex items-center justify-center mb-4 w-full">
+              <h2 className="font-serif-custom text-4xl leading-tight text-center line-clamp-2" style={{ color }}>{project.heading}</h2>
+            </div>
+            <div className="h-[4.5rem] mb-6 w-full overflow-hidden">
+              <p className="text-sm text-gray-600 leading-relaxed font-light line-clamp-3">{project.description}</p>
+            </div>
+            <div className="h-[3rem] flex justify-center flex-wrap gap-2 mb-8 overflow-hidden">
+              {project.tags.map((tag) => (
+                <span key={tag} className="px-3 py-1 rounded-full border border-gray-300 text-[10px] uppercase tracking-wider self-start">{tag}</span>
+              ))}
+            </div>
+            {/* Mobile nav */}
+            <div className="md:hidden flex items-center justify-center gap-6 mb-6">
+              <button onClick={prev} className="border border-black px-4 py-2 text-[10px] uppercase tracking-widest hover:bg-black hover:text-white transition-colors">← Prev</button>
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest">{active + 1} / {real.length}</span>
+              <button onClick={next} className="border border-black px-4 py-2 text-[10px] uppercase tracking-widest hover:bg-black hover:text-white transition-colors">Next →</button>
+            </div>
+            <a href={project.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-black px-6 py-3 text-[10px] uppercase tracking-widest hover:bg-black hover:text-white transition-colors">
+              View Project <ArrowUpRight className="w-3 h-3" />
+            </a>
+          </div>
+
+        </div>
+      </section>
 
       {/* Coming soon teaser row */}
       <section className="w-full py-24 border-b border-editorial">
@@ -603,11 +616,15 @@ const Contact = () => (
   <footer id="contact" className="w-full py-32 text-center">
     <div className="max-w-3xl mx-auto px-6">
       <Reveal>
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[#3b638c] mb-8">What's Next?</p>
-        <h2 className="font-serif-custom text-5xl md:text-7xl mb-10 leading-tight">Let's build something beautiful.</h2>
-        <a href={`mailto:${portfolioData.personalInfo.email}`} className="inline-flex items-center gap-3 bg-black text-white px-10 py-5 text-xs uppercase tracking-widest hover:bg-[#3b638c] transition-colors mb-16">
-          <Mail className="w-4 h-4" /> Say Hello
-        </a>
+        <h2 className="font-serif-custom text-5xl md:text-7xl mb-10 leading-tight">Get in Touch</h2>
+        <div className="flex items-center justify-center gap-4 flex-wrap mb-16">
+          <a href={`mailto:${portfolioData.personalInfo.email}`} className="inline-flex items-center gap-3 bg-black text-white px-10 py-5 text-xs uppercase tracking-widest hover:bg-[#3b638c] transition-colors">
+            <Mail className="w-4 h-4" /> Say Hello
+          </a>
+          <a href="https://drive.google.com/drive/u/0/folders/1685oogsDnOugOYtnKjyY02Hk9Nc2yJTg" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 border border-black text-black px-10 py-5 text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-colors">
+            <ArrowUpRight className="w-4 h-4" /> Resume
+          </a>
+        </div>
         <div className="flex items-center justify-center gap-8 text-[11px] uppercase tracking-[0.2em] text-gray-500 mb-12">
           <a href={portfolioData.personalInfo.github} className="hover:text-black transition-colors flex items-center gap-1.5" target="_blank" rel="noreferrer">
             GitHub <ArrowUpRight className="w-3 h-3" />
